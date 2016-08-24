@@ -1,0 +1,66 @@
+# CI  Mark that build is executed in CI environment
+# GITLAB_CI   Mark that build is executed in GitLab CI environment
+# CI_SERVER   Mark that build is executed in CI environment
+# CI_SERVER_NAME  CI server that is used to coordinate builds
+# CI_SERVER_VERSION   Not yet defined
+# CI_SERVER_REVISION  Not yet defined
+# CI_BUILD_REF  The commit revision for which project is built
+# CI_BUILD_BEFORE_SHA   The first commit that were included in push request
+# CI_BUILD_REF_NAME   The branch or tag name for which project is built
+# CI_BUILD_ID   The unique id of the current build that GitLab CI uses internally
+# CI_BUILD_REPO   The URL to clone the Git repository
+# CI_PROJECT_ID   The unique id of the current project that GitLab CI uses internally
+# CI_PROJECT_DIR  The full path where the repository is cloned and where the build is ran
+
+
+variables:
+  DOCKER_VOLUMES:  "-v /opt/docker_private/.chef:/root/.chef"
+  DOCKER_IMG:      "tzg/buildbox"
+  DOCKER_TAG_DEV:  "dev"
+  DOCKER_TAG_PROD: "prod"
+
+
+stages:
+  - build_dev
+  - link_prod
+
+
+.job_template: &build_dev
+  stage: build_dev
+  tags:
+    - docker
+    - dev
+  script:
+    - docker build -t "${DOCKER_IMG}:${DOCKER_TAG_DEV}" "${CI_PROJECT_DIR}"
+    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "ruby -v"
+    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "foodcritic -V"
+    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "rubocop -V"
+
+
+.job_template: &link_prod
+  stage: link_prod
+  tags:
+    - docker
+    - prod
+  script:
+    - echo "docker tag `docker images | grep "${DOCKER_IMG}" | grep "${DOCKER_TAG_DEV}" | awk -F' ' '{print $3}'` \"${DOCKER_IMG}:${DOCKER_TAG_PROD}\""
+    - docker tag `docker images | grep "${DOCKER_IMG}" | grep "${DOCKER_TAG_DEV}" | awk -F' ' '{print $3}'` "${DOCKER_IMG}:${DOCKER_TAG_PROD}"
+
+
+dev:
+  tags:
+    - docker
+    - dev
+  <<: *build_dev
+
+
+prod:
+  tags:
+    - docker
+    - prod
+  <<: *link_prod
+
+
+after_script:
+    - docker ps -a | grep -i exited | awk -F' ' '{print $1}' | grep -vi container | xargs docker rm
+    - docker ps -a | grep -i dead | awk -F' ' '{print $1}' | grep -vi container | xargs docker rm
