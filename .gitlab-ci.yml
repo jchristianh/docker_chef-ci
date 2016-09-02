@@ -32,9 +32,9 @@ stages:
     - dev
   script:
     - docker build -t "${DOCKER_IMG}:${DOCKER_TAG_DEV}" "${CI_PROJECT_DIR}"
-    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "ruby -v"
-    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "foodcritic -V"
-    - docker run $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "rubocop -V"
+    - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "ruby -v"
+    - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "foodcritic -V"
+    - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "rubocop -V"
 
 
 .job_template: &link_prod
@@ -61,7 +61,3 @@ prod:
     - prod
   <<: *link_prod
 
-
-after_script:
-    - docker ps -a | grep -i exited | awk -F' ' '{print $1}' | grep -vi container | xargs docker rm
-    - docker ps -a | grep -i dead | awk -F' ' '{print $1}' | grep -vi container | xargs docker rm
