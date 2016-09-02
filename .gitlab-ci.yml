@@ -14,10 +14,10 @@
 
 
 variables:
-  DOCKER_VOLUMES:  "-v /opt/docker_private/.chef:/root/.chef"
-  DOCKER_IMG:      "tzg/buildbox"
+  DOCKER_VOLUMES:  ""
+  DOCKER_IMG:      "docker.thezengarden.net/chef-ci"
   DOCKER_TAG_DEV:  "dev"
-  DOCKER_TAG_PROD: "prod"
+  DOCKER_TAG_PROD: "latest"
 
 
 stages:
@@ -45,6 +45,7 @@ stages:
   script:
     - echo "docker tag `docker images | grep "${DOCKER_IMG}" | grep "${DOCKER_TAG_DEV}" | awk -F' ' '{print $3}'` \"${DOCKER_IMG}:${DOCKER_TAG_PROD}\""
     - docker tag `docker images | grep "${DOCKER_IMG}" | grep "${DOCKER_TAG_DEV}" | awk -F' ' '{print $3}'` "${DOCKER_IMG}:${DOCKER_TAG_PROD}"
+    - docker push $DOCKER_IMG
 
 
 dev:
