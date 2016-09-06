@@ -31,7 +31,7 @@ stages:
     - docker
     - dev
   script:
-    - docker build -t "${DOCKER_IMG}:${DOCKER_TAG_DEV}" "${CI_PROJECT_DIR}"
+    - docker build --no-cache -t "${DOCKER_IMG}:${DOCKER_TAG_DEV}" "${CI_PROJECT_DIR}"
     - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "ruby -v"
     - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "foodcritic -V"
     - docker run --rm $DOCKER_VOLUMES -i "${DOCKER_IMG}:${DOCKER_TAG_DEV}" /bin/bash -l -c "rubocop -V"
