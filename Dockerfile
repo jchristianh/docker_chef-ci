@@ -1,4 +1,8 @@
-FROM alpine:latest
+##################################
+# The Zen Garden :: Chef CI      #
+#     Build Tag: 160919-411      #
+##################################
+FROM docker.thezengarden.net/alpine-base
 MAINTAINER Chris Hammer <chris@thezengarden.net>
 
 
