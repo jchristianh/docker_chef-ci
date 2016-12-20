@@ -1,6 +1,6 @@
 ##################################
 # The Zen Garden :: Chef CI      #
-#     Build Tag: 161108-1547     #
+#     Build Tag: 161220-1535     #
 ##################################
 FROM docker.thezengarden.net/alpine-base
 MAINTAINER Chris Hammer <chris@thezengarden.net>
@@ -14,6 +14,14 @@ RUN apk add alpine-sdk bash tar gzip curl ruby ruby-dev ruby-rake ruby-rdoc libx
 
 # Install Ruby 2.1.8, Rubocop, and Foodcritic:
 ##############################################
-RUN /bin/bash -l -c "gem install foodcritic --no-document \
+RUN /bin/bash -l -c "gem install bundler --no-document \
+                     && gem install io-console --no-document \
+                     && gem install foodcritic --no-document \
                      && gem install rubocop --no-document \
                      && mkdir -p /opt/builds"
+
+
+# If we don't specify otherwise, lets launch a shell:
+# #####################################################
+CMD ["/bin/bash"]
+
