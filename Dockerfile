@@ -1,6 +1,6 @@
 ##################################
 # The Zen Garden :: Chef CI      #
-#     Build Tag: 170510-838      #
+#     Build Tag: 170513-125      #
 ##################################
 FROM docker.thezengarden.net/alpine-base
 MAINTAINER Chris Hammer <chris@thezengarden.net>
@@ -24,4 +24,3 @@ RUN /bin/bash -l -c "gem install bundler --no-document \
 # If we don't specify otherwise, lets launch a shell:
 # #####################################################
 CMD ["/bin/bash"]
-

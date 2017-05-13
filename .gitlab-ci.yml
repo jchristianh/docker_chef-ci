@@ -1,16 +1,32 @@
-# CI  Mark that build is executed in CI environment
-# GITLAB_CI   Mark that build is executed in GitLab CI environment
-# CI_SERVER   Mark that build is executed in CI environment
-# CI_SERVER_NAME  CI server that is used to coordinate builds
-# CI_SERVER_VERSION   Not yet defined
-# CI_SERVER_REVISION  Not yet defined
-# CI_BUILD_REF  The commit revision for which project is built
+# Build script for Gitlab CI
+#
+# 1. Builds image as a development build
+#    a. Build tag defined via DOCKER_TAG_DEV
+# 2. If build succeeds, we link dev build to latest (or
+#    a. Build tag defined via DOCKER_TAG_PROD
+#    b. Push to currently logged in Docker Registry
+#       tagging with DOCKER_TAG_PROD
+#
+# Chris Hammer <chris@thezengarden.net>
+#######################################
+
+######################################
+# Variables accessible to Gitlab CI: #
+######################################
+# CI                    Mark that build is executed in CI environment
+# GITLAB_CI             Mark that build is executed in GitLab CI environment
+# CI_SERVER             Mark that build is executed in CI environment
+# CI_SERVER_NAME        CI server that is used to coordinate builds
+# CI_SERVER_VERSION     Not yet defined
+# CI_SERVER_REVISION    Not yet defined
+# CI_BUILD_REF          The commit revision for which project is built
 # CI_BUILD_BEFORE_SHA   The first commit that were included in push request
-# CI_BUILD_REF_NAME   The branch or tag name for which project is built
-# CI_BUILD_ID   The unique id of the current build that GitLab CI uses internally
-# CI_BUILD_REPO   The URL to clone the Git repository
-# CI_PROJECT_ID   The unique id of the current project that GitLab CI uses internally
-# CI_PROJECT_DIR  The full path where the repository is cloned and where the build is ran
+# CI_BUILD_REF_NAME     The branch or tag name for which project is built
+# CI_BUILD_ID           The unique id of the current build that GitLab CI uses internally
+# CI_BUILD_REPO         The URL to clone the Git repository
+# CI_PROJECT_ID         The unique id of the current project that GitLab CI uses internally
+# CI_PROJECT_DIR        The full path where the repository is cloned and where the build is ran
+###############################################################################################
 
 
 variables:
@@ -60,4 +76,3 @@ prod:
     - docker
     - prod
   <<: *link_prod
-
